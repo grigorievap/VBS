@@ -1,14 +1,13 @@
 Function Ping(strip)
-	Dim objshell, boolcode
-	Set objshell = CreateObject("Wscript.Shell")
-	boolcode = objshell.Run("ping -n 1 -w 1000 " & strip, 0, True)
-	If boolcode = 0 Then
-		Ping = True
-	Else
-		Ping = False
-	End If
+Dim objshell, boolcode
+Set objshell = CreateObject("Wscript.Shell")
+boolcode = objshell.Run("ping -n 1 -w 1000 " & strip, 0, True)
+If boolcode = 0 Then
+    Ping = True
+Else
+    Ping = False
+End If
 End Function
-
 Sub PingSystem()
     Dim strip As String
     Dim test As String
@@ -76,7 +75,16 @@ End Sub
 Sub add_new_line()
     For introw = 3 To ActiveSheet.Cells(65536, 2).End(xlUp).Row + 1
         If IsEmpty(ActiveSheet.Cells(introw, 2).Value) Then
+            ' Если цвет ячейки уже заполнен, то выходим из цикла
+            If ActiveSheet.Cells(introw, 2).Interior.Color = 5296274 Then
+                Exit For
+            End If
+            ' Копирование диапазона выше в новую строку с дальнейшей очисткой
+            ActiveSheet.Range(ActiveSheet.Cells(introw - 1, 2), ActiveSheet.Cells(introw - 1, 14)).Select
+            Selection.Copy
             ActiveSheet.Range(ActiveSheet.Cells(introw, 2), ActiveSheet.Cells(introw, 14)).Select
+            ActiveSheet.Paste
+            Selection.ClearContents
             With Selection.Interior
                 .Pattern = xlSolid
                 .PatternColorIndex = xlAutomatic
@@ -84,45 +92,8 @@ Sub add_new_line()
                 .TintAndShade = 0
                 .PatternTintAndShade = 0
             End With
-            Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-            Selection.Borders(xlDiagonalUp).LineStyle = xlNone
-            With Selection.Borders(xlEdgeLeft)
-                .LineStyle = xlContinuous
-                .ColorIndex = 0
-                .TintAndShade = 0
-                .Weight = xlThin
-            End With
-            With Selection.Borders(xlEdgeTop)
-                .LineStyle = xlContinuous
-                .ColorIndex = 0
-                .TintAndShade = 0
-                .Weight = xlThin
-            End With
-            With Selection.Borders(xlEdgeBottom)
-                .LineStyle = xlContinuous
-                .ColorIndex = 0
-                .TintAndShade = 0
-                .Weight = xlThin
-            End With
-            With Selection.Borders(xlEdgeRight)
-                .LineStyle = xlContinuous
-                .ColorIndex = 0
-                .TintAndShade = 0
-                .Weight = xlThin
-            End With
-            With Selection.Borders(xlInsideVertical)
-                .LineStyle = xlContinuous
-                .ColorIndex = 0
-                .TintAndShade = 0
-                .Weight = xlThin
-            End With
-            With Selection.Borders(xlInsideHorizontal)
-                .LineStyle = xlContinuous
-                .ColorIndex = 0
-                .TintAndShade = 0
-                .Weight = xlThin
-            End With
             Range("A2").Select
+
         End If
     Next
 End Sub
